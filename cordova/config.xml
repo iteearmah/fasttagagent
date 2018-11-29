@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.fastagent" version="0.1.3">
+  <name>FASTAG AGENT</name>
+  <description>
+    An Event Attendance Tracking System Monitor
+  </description>
+  <author email="iteearmah@gmail.com">
+    Samuel Armah
+  </author>
+   <hook type="after_platform_add" src="scripts/android/afterPlatformAdd.js" />
+  <preference name="EnableDeveloperConsole" value="false" />
+  <plugin name="cordova-plugin-x-toast"/>
+   <platform name="android">
+        <preference name="Theme" value="@style/Theme.Fastagagent" />
+        <preference name="ThemeSplash" value="@style/Theme.FastagagentSplashScreen" />
+        <icon src="resources/android/res/mipmap-mdpi/ic_launcher.png" density="mdpi" />
+        <icon src="resources/android/res/mipmap-hdpi/ic_launcher.png" density="hdpi" />
+        <icon src="resources/android/res/mipmap-xhdpi/ic_launcher.png" density="xhdpi" />
+        <icon src="resources/android/res/mipmap-xxhdpi/ic_launcher.png" density="xxhdpi" />
+        <icon src="resources/android/res/mipmap-xxxhdpi/ic_launcher.png" density="xxxhdpi" />
+    </platform>
+</widget>

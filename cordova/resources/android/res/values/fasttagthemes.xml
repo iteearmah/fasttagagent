@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Theme.Fastagagent" parent="@style/Theme.Tabris.Light.DarkAppBar">
+        <item name="colorPrimary">#FCA906</item>
+        <item name="colorPrimaryDark">#E09500</item>
+        <item name="colorAccent">#A22F54</item>
+    </style>
+    <style name="Theme.FastagagentSplashScreen" parent="Theme.Tabris">
+        <item name="android:statusBarColor">#FCA906</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowBackground">@drawable/fastagent_screen</item>
+    </style>
+</resources>
