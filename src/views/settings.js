@@ -22,6 +22,7 @@ localStorage.setItem('loggedin', false);
 exports.show = function(navigationView) {
     navigationView.toolbarColor = config.item.COLOR_TWO;
     let pageTitle = 'Settings - ' + config.item.APP_NAME;
+    let event_code = localStorage.getItem('event_code');
     navigationView.toolbarVisible = false;
     localStorage.setItem('form_type', 'input');
     let page = new Page({
@@ -52,7 +53,7 @@ exports.show = function(navigationView) {
     new TextInput({
         id: 'event_code',
         font: "initial",
-        text: 'nl8G34',
+        text: event_code || '',
         borderColor: config.item.COLOR_TWO,
         message: 'Event Code'
     }).on('accept', ({}) => {}).appendTo(pageContainer);
@@ -116,6 +117,7 @@ exports.show = function(navigationView) {
                 let response = JSON.parse(this.responseText);
                 if (response.status == 'success') {
                     localStorage.setItem('event_data', JSON.stringify(response.data));
+                    localStorage.setItem('event_code', event_code);
                     activityIndicator.dispose();
                     page.dispose();
                     monitor_event.show(navigationView);

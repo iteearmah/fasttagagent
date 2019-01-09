@@ -21,6 +21,8 @@ let accessdomainCount = 0;
 exports.show = function(navigationView) {
     localStorage.setItem('token', null);
     localStorage.setItem('loggedin', false);
+    let login_email = localStorage.getItem('login_email');
+    let login_password = localStorage.getItem('login_password');
     navigationView.toolbarColor = config.item.COLOR_TWO;
     let pageTitle = 'Login - ' + config.item.APP_NAME;
     navigationView.toolbarVisible = false;
@@ -89,7 +91,7 @@ exports.show = function(navigationView) {
                 keyboard: 'default',
                 borderColor: config.item.COLOR_TWO,
                 text: localStorage.getItem('access_domain'),
-                message: 'IP with Port / Domain'
+                message: ''
             }).on('input', ({
                 text
             }) => {
@@ -115,7 +117,7 @@ exports.show = function(navigationView) {
                 keyboard: 'default',
                 borderColor: config.item.COLOR_TWO,
                 text: localStorage.getItem('access_ws'),
-                message: 'Web Socket IP with Port'
+                message: ''
             }).on('input', ({
                 text
             }) => {
@@ -132,7 +134,7 @@ exports.show = function(navigationView) {
     new TextInput({
         id: 'login_email',
         borderColor: config.item.COLOR_TWO,
-        text: 'lilmopat@gmail.com',
+        text: login_email || '',
         message: 'Email Address'
     }).on('accept', ({}) => {
         //page.find('#login_password').set('keepFocus', true);
@@ -140,7 +142,7 @@ exports.show = function(navigationView) {
     new TextInput({
         id: 'login_password',
         borderColor: config.item.COLOR_TWO,
-        text: '123456',
+        text: login_password || '',
         message: 'Password'
     }).on('accept', ({}) => {}).appendTo(pageContainer);
     new Button({
@@ -179,6 +181,8 @@ exports.show = function(navigationView) {
                 localStorage.setItem('token', response.success.token);
                 localStorage.setItem('user_uuid', response.success.user_uuid);
                 localStorage.setItem('loggedin', true);
+                localStorage.setItem('login_email', login_email);
+                localStorage.setItem('login_password', login_password);
                 activityIndicator.dispose();
                 page.dispose();
                 settings.show(navigationView);
