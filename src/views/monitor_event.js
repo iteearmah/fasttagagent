@@ -16,6 +16,8 @@ const {
 let config = require('../config.js');
 let animation = require('../utils/animation.js');
 let generic = require('../utils/generic.js');
+let layout = require('../utils/layout.js');
+let inputs = require('../utils/inputs.js');
 ui.navigationBar.background = '#fff';
 exports.show = function(navigationView) {
     //login.check(navigationView);
@@ -27,34 +29,13 @@ exports.show = function(navigationView) {
     let pageTitle = 'Monitor - ' + config.item.APP_NAME;
     navigationView.toolbarVisible = false;
     let attendees_list = [];
-    /*let attendees_list = [{
-        id: 12,
-        full_name: 'Samuel Armah',
-        phone: '0269153506',
-    }, {
-        id: 34,
-        full_name: 'Kofi Annan',
-        phone: '0267443768',
-    }, {
-        id: 32,
-        full_name: 'Ama Boafo',
-        phone: '0248291829',
-    }, {
-        id: 83,
-        full_name: 'Cyril Noko',
-        phone: '0269153506',
-    }, {
-        id: 93,
-        full_name: 'Bismark Deho',
-        phone: '0267443768',
-    }, ];*/
-    //Refresh data
-    //End of refresh
-    //
     let page = new Page({
         title: pageTitle,
         autoDispose: true,
-        /*background: eventBGColor,*/
+        background: config.item.MAIN_BGCOLOR,
+        backgroundImage: {
+            src: config.item.PAGE_BG
+        },
     }).appendTo(navigationView);
     let refreshComposite = new RefreshComposite({
         left: 0,
@@ -68,21 +49,28 @@ exports.show = function(navigationView) {
         target.refreshIndicator = false;
         console.log(`last refresh: ${new Date()}`);
     }, 2000)).appendTo(page);
-    let scrollView = new ScrollView({
+    let logoContainer = layout.logoContainer(refreshComposite);
+    let eventLogoBox = new Composite({
         left: 0,
-        top: 0,
+        right: '50%',
+        background: 'red'
+    }).appendTo(logoContainer);
+    let eventCounterBox = new Composite({
+        left: '50%',
         right: 0,
-        bottom: 0
+        background: 'blue'
+    }).appendTo(logoContainer);
+    let scrollView = new ScrollView({
+        left: '5%',
+        top: [logoContainer, 30],
+        right: '5%',
+        bottom: 0,
     }).appendTo(refreshComposite);
-    let pageContainer = new Composite({
-        layoutData: {
-            right: '5%',
-            left: '5%',
-            centerY: 0
-        },
-        padding: 10,
-    }).appendTo(scrollView);
     new TextView({
+        layoutData: {
+            centerX: 0,
+            centerY: 0,
+        },
         id: 'attendee_numbers',
         text: '0',
         markupEnabled: true,
@@ -92,25 +80,51 @@ exports.show = function(navigationView) {
             src: "images/counter-bg.png",
             scale: 2
         },
-    }).appendTo(scrollView);
-    new TextInput({
+    }).appendTo(eventCounterBox);
+    let searchInputBox = inputs.textInputBox(scrollView, 'search_box', {
+        centerY: 10,
+        right: 35,
+        left: 30,
+        height: 60,
         id: 'search_box',
-        font: "initial",
-        borderColor: eventFontColor || config.item.COLOR_TWO,
-        message: 'Search Attendee'
-    }).on('accept', ({
-        text
-    }) => {
-        console.log('Search:' + text);
-        searchAttendees(text);
-    }).appendTo(scrollView);
+        borderColor: '#fff',
+        text: '',
+        message: 'Enter Attendee Name'
+    }, 'Search', 'password.png');
+    new ImageView({
+        layoutData: {
+            right: [searchInputBox, 5],
+            width: 55,
+            height: 55,
+        },
+        id: 'submit_search',
+        image: {
+            src: "images/search-black-24dp@3x.png",
+            scale: 2
+        },
+        highlightOnTouch: true,
+        scaleMode: 'auto',
+    }).on('tap', ({}) => {
+        let searchText = page.find('#search_box').get('text');
+        if (searchText == '') {
+            let alertDialog = new AlertDialog({
+                message: 'Enter search phrase',
+                buttons: {
+                    ok: 'OK'
+                }
+            }).open();
+            return false;
+        }
+        console.log('Search:' + searchText);
+        searchAttendees(searchText);
+    }).appendTo(searchInputBox);
     let collectionView = new CollectionView({
         left: 0,
         top: 'prev() 16',
         right: 0,
         bottom: 0,
         itemCount: attendees_list.length,
-        cellHeight: 65,
+        cellHeight: 70,
         createCell: () => {
             let cell = new Composite({
                 padding: {
@@ -129,13 +143,21 @@ exports.show = function(navigationView) {
                 markupEnabled: true,
                 font: '17px bold',
                 top: 'prev()',
+                textColor: "#fff",
                 alignment: 'left'
             }).appendTo(cell);
-            new TextView({
+            let attendeePhone = new TextView({
                 id: 'attendee_phone',
-                top: 'prev() 10',
+                top: ['prev()', 10],
                 alignment: 'left',
                 textColor: "#777",
+            }).appendTo(cell);
+            new Composite({
+                left: 0,
+                right: 0,
+                top: ['prev()', 4],
+                height: 1,
+                background: '#ABB1BA'
             }).appendTo(cell);
             return cell;
         },
@@ -175,11 +197,6 @@ exports.show = function(navigationView) {
             top: 30,
             centerX: 0,
             width: 130,
-        },
-        '#search_box': {
-            left: 10,
-            top: ['prev()', 10],
-            right: 10,
         },
     });
     startWS(); //start websocket

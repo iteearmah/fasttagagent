@@ -16,6 +16,8 @@ const {
 let config = require('../config.js');
 let animation = require('../utils/animation.js');
 let settings = require('./settings.js');
+let layout = require('../utils/layout.js');
+let inputs = require('../utils/inputs.js');
 ui.navigationBar.background = '#fff';
 let accessdomainCount = 0;
 exports.show = function(navigationView) {
@@ -29,22 +31,24 @@ exports.show = function(navigationView) {
     let page = new Page({
         title: pageTitle,
         autoDispose: true,
-    }).appendTo(navigationView);
-    let scrollView = new ScrollView({
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0
-    }).appendTo(page);
-    let pageContainer = new Composite({
-        layoutData: {
-            right: '5%',
-            left: '5%',
-            centerY: 0
+        background: config.item.MAIN_BGCOLOR,
+        backgroundImage: {
+            src: config.item.PAGE_BG
         },
-        padding: 10,
-    }).appendTo(scrollView);
+    }).appendTo(navigationView);
+    let logoContainer = layout.logoContainer(page);
+    let scrollView = new ScrollView({
+        left: '5%',
+        top: [logoContainer, 30],
+        right: '5%',
+        bottom: 0,
+    }).appendTo(page);
     new ImageView({
+        layoutData: {
+            centerY: 0,
+            left: '20%',
+            right: '20%',
+        },
         id: 'logo_image',
         image: {
             src: config.item.LOGO,
@@ -130,26 +134,37 @@ exports.show = function(navigationView) {
                 console.log('access_ws [close]: ' + localStorage.getItem('access_ws'));
             }).open();
         }
-    }).appendTo(pageContainer);
-    new TextInput({
+    }).appendTo(logoContainer);
+    inputs.textInputBox(scrollView, 'login_email', {
+        centerY: 10,
+        right: 35,
+        left: 30,
+        height: 60,
+        keyboard: 'email',
+        autoCorrect: false,
         id: 'login_email',
-        borderColor: config.item.COLOR_TWO,
+        borderColor: '#fff',
         text: login_email || '',
-        message: 'Email Address'
-    }).on('accept', ({}) => {
-        //page.find('#login_password').set('keepFocus', true);
-    }).appendTo(pageContainer);
-    new TextInput({
+        message: 'Enter Email Address'
+    }, 'Email', 'email.png');
+    inputs.textInputBox(scrollView, 'login_password', {
+        centerY: 10,
+        right: 35,
+        left: 30,
+        height: 60,
+        type: 'password',
+        keyboard: 'default',
+        autoCorrect: false,
         id: 'login_password',
-        borderColor: config.item.COLOR_TWO,
+        borderColor: '#fff',
         text: login_password || '',
-        message: 'Password'
-    }).on('accept', ({}) => {}).appendTo(pageContainer);
+        message: 'Enter Password'
+    }, 'Password', 'password.png');
     new Button({
         id: 'login_btn',
         text: 'Login',
         textColor: '#fff',
-        background: config.item.COLOR_TWO,
+        background: config.item.BUTTON_PRIMARY
     }).on('select', ({}) => {
         let login_email = page.find('#login_email').get('text');
         let login_password = page.find('#login_password').get('text');
@@ -205,35 +220,17 @@ exports.show = function(navigationView) {
             }
         };
         xhr.send("email=" + login_email + "&password=" + login_password);
-    }).appendTo(pageContainer);
+    }).appendTo(scrollView);
     scrollView.apply({
         '#logo_image': {
-            top: ['prev()', 10],
-            right: '20%',
-            left: '20%',
-        },
-        '#login_email': {
-            top: ['prev()', 10],
-            right: 0,
-            left: 0,
-            height: '50',
-            keyboard: 'email',
-            autoCorrect: false,
-        },
-        '#login_password': {
-            top: ['prev()', 10],
-            right: 0,
-            left: 0,
-            height: '50',
-            type: 'password',
-            keyboard: 'default',
-            autoCorrect: false,
+            centerY: 0,
+            centerX: 0
         },
         '#login_btn': {
             top: ['prev()', 20],
-            right: 0,
-            left: 0,
-            height: '50',
+            height: 60,
+            width: 200,
+            centerX: 0,
             highlightOnTouch: true,
         },
     });
